@@ -1,12 +1,13 @@
 import express, { Router } from 'express'
-import { editTodoById, getAllTodos, getTodoById, createNewTodo } from '../controllers/todo';
+import { editTodoById, getAllTodos, getTodoById, createNewTodo, deleteTodoById } from '../controllers/todo';
+import fetchUser from '../Middleware/fetchuser';
 
 const router: Router = express.Router();
 
-router.post('/create-todo', createNewTodo)
-router.delete('/:id', editTodoById)
-router.put('/:id', editTodoById)
-router.get('/:id', getTodoById)
-router.get('/', getAllTodos)
+router.post('/create-todo',fetchUser, createNewTodo)
+router.delete('/:id',fetchUser, deleteTodoById)
+router.put('/:id',fetchUser, editTodoById)
+router.get('/:id',fetchUser, getTodoById)
+router.get('/',fetchUser, getAllTodos)
 
 export default router;

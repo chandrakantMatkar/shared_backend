@@ -1,11 +1,11 @@
-import bcrypt,{ compare } from "bcrypt";
+import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
 export interface IUser extends mongoose.Document{
     name:string,
     email:string,
     resetToken?: string|undefined,
-    resetTokenExpiry?: string|undefined,
+    resetTokenExpiry?: number|undefined,
     date: Date,
     password: string,
     comparePassword(password: string): Promise<Boolean>,
@@ -51,9 +51,10 @@ userSchema.pre('save', async function name(next) {
     next();
 })
 
-userSchema.methods.comparePassword = async function comaprePass(password:string) {
+userSchema.methods.comparePassword =  async function comaprePass(password:string) {
     const user = this as IUser;
-    return  await compare(password,user.password);
+    console.log(password,user.password)
+    return await bcrypt.compare(password,user.password);
 }
 
 export const User = mongoose.model<IUser>('user',userSchema);
