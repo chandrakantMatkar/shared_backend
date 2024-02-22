@@ -81,7 +81,6 @@ export const createNewTodo = async(req: Request, res: Response, next: NextFuncti
     }
     const { title, description } = req.body;
     try {
-        console.log(title,description,req.user);
         const todo = await Todo.create({
             title, description, user: {id: req.user?.id}
         })

@@ -35,13 +35,11 @@ interface UserData {
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await User.find().select('name email date');
-        console.log(users);
         if (!users) {
             return res.status(404).send(`users not found.`)
         }
         res.status(200).json(users);
     } catch (error) {
-        console.log(error);
         return res.sendStatus(500);
     }
 }
@@ -54,7 +52,6 @@ export const getUserById = async (req: Request, res: Response) => {
         }
         res.status(200).json(user);
     } catch (error) {
-        console.log(error);
         return res.sendStatus(500);
     }
 }
@@ -80,7 +77,6 @@ export const postSignUp = async (req: Request, res: Response) => {
         const authToken = jwt.sign({ email: user.email, id: user._id, expiry: Math.floor(Date.now() / 1000) + 60 * 60 }, process.env.JWT_PRIVATE_KEY as jwt.Secret)
         res.status(200).json({ authToken });
     } catch (error) {
-        console.log(error);
         return res.sendStatus(500);
     }
 }
@@ -116,7 +112,6 @@ export const updateUser = async (req: Request, res: Response) => {
         const updatedUser = await User.findByIdAndUpdate(req.params.id, modifiedFields, { new: true }).select("-password")
         res.status(200).json(updatedUser);
     } catch (error) {
-        console.log(error);
         return res.sendStatus(500);
     }
 }
@@ -130,7 +125,6 @@ export const deleteUser = async (req: Request, res: Response) => {
         user = await User.findByIdAndDelete(req.params.id);
         res.status(200).json(user);
     } catch (error) {
-        console.log(error);
         return res.status(500)
     }
 }
@@ -146,14 +140,11 @@ export const postForgotPassword = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(400).send('Invalid Username.');
         }
-        console.log(user)
         //creating unique token and hashing to save in the database.
         const token = crypto.randomBytes(20).toString('hex');
         user.resetToken = crypto.createHash('sha256').update(token).digest('hex');
         user.resetTokenExpiry = Date.now() + 3600000; // Token expires in 1 hour
         await user.save();
-        console.log('updated', user)
-        res.status(200).send({ token: user.resetToken });
         const resetLink = `${process.env.BASE_URL}/reset-password?token=${user.resetToken}` //`http://localhost:3000/reset-password?token=${user.resetToken}`;
         const mailOptions = {
             from: process.env.EMAIL_USERNAME,
@@ -163,9 +154,8 @@ export const postForgotPassword = async (req: Request, res: Response) => {
         }
         mailer.sendMail(mailOptions, (error: any, info: { response: string; }) => {
             if (error) {
-                console.log(error);
             } else {
-                console.log('Email sent: ' + info.response);
+                res.status(200).send({message:info.response, token: user.resetToken });
             }
         });
     } catch (error: any) {
