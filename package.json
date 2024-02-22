@@ -16,7 +16,7 @@
     "start:prod": "node build/index.js",
     "prepare": "npm run tsc",
     "build": "tsc",
-    "start": "node ./dist/application.js"
+    "start": "node ./build/index.js"
   },
   "keywords": [],
   "author": "",
