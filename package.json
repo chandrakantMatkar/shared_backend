@@ -14,7 +14,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
     "start:prod": "node build/index.js",
-    "prepare": "npm run tsc"
+    "prepare": "npm run tsc",
+    "build": "tsc",
+    "start": "node ./dist/application.js"
   },
   "keywords": [],
   "author": "",
